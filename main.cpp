@@ -158,6 +158,7 @@ int main() {
     //Derivative
     cout<<"Derivatives: ";
     calcDerivative(arr,10,ddx);
+    //loops so that each element gets printed
     for (int i = 0; i < 10; i++) {
         cout<<ddx[i]<<" ";
     }
@@ -168,19 +169,23 @@ int main() {
     cout<<"Root Mean: "<<rootmeansquare(arr,10)<<endl;
     //T-Test:
     cout<<"First Comparison: ";
+    //loop so that each element gets printed
     for (int i = 0; i < 10; i++) {
         cout<<arr[i]<<" ";
     }
     cout<<"vs.";
+    //loop so that each element gets printed
     for (int i = 0; i < 10; i++) {
         cout<<arr2[i]<<" ";
     }
     cout<<endl;
+    //actually calls the t-test function, printing the result
     if (ttest(arr, arr2, 10, 10) == 1)
-        cout<<"Significantly different";
+        cout<<"Significantly different"<<endl;
     else {
-        cout<<"No significant difference";
+        cout<<"No significant difference"<<endl;
     }
+    //this is the exact same, just with arr3 instead of arr2
     cout<<"Second Comparison: ";
     for (int i = 0; i < 10; i++) {
         cout<<arr[i]<<" ";
@@ -193,23 +198,19 @@ int main() {
     if (ttest(arr, arr3, 10, 10) == 1)
         cout<<"Significantly different";
     else {
-        cout<<"No significant difference";
+        cout<<"Not significantly difference";
     }
-    // bool first_comp = true;
-    // bool second_comp = false;
-    // first_comp = ttest(arr, arr2, 10, 10);
-    // second_comp = ttest(arr, arr3, 10, 10);
-    // cout << first_comp << endl;
-    // cout << second_comp << endl;
     return 0;
 }
 
-
+//Calls the sum function, returns sum/size
 double average(const double* arr, int size) {
     double total = sum(arr, size);
     return total / size;
 }
 
+//First calculates the mean, then goes through and calculates the sum of differences squared, then
+//takes the square root of the SOS divided by either size or size-1
 double stdev(const double* arr, int size, int PoS) {
     double sos = 0;
     double st_dev;
@@ -225,7 +226,7 @@ double stdev(const double* arr, int size, int PoS) {
 
     return st_dev;
 }
-
+//Same thing as st.dev, but doesn't take the square root
 double variance(const double* arr, int size, int PoS) {
     double sos = 0;
     double variance = 0;
@@ -241,6 +242,7 @@ double variance(const double* arr, int size, int PoS) {
     return variance;
 }
 
+//sums the array
 double sum(const double* arr, int size) {
     double total = 0;
     for (int i = 0; i < size; i++) {
@@ -248,6 +250,7 @@ double sum(const double* arr, int size) {
     }
     return total;
 }
+//calculates the standard error of the array
 double std_error(const double* arr, int size) {
     double st_dev = stdev(arr, size);
     return st_dev/sqrt(size);
@@ -259,7 +262,7 @@ double median(const double* arr, int size) {
     for (int i = 0; i < size; i++) {
         dummy[i] = arr[i];
     }
-    //bubble sorting algorithm; checks each number against each number after it).
+    //bubble sorting algorithm; checks each number against each number after it), and swaps them if necessary
     for (int i = 0; i < size; i++) {
         swapped = false;
         for (int i = 0; i < size; i++) {
@@ -271,39 +274,47 @@ double median(const double* arr, int size) {
         if (!swapped)
         break;
     }
+    //returns either the middle number or the avg of the 2 middle numbers
     if (size % 2 == 1)
          return double(dummy[(size-1)/2]);
     else
          return double(dummy[size/2] + dummy[(size - 2)/2])/ 2;
     }
+//iterates through the array, replacing the max value if the checked value is higher.
 double MAX(const double* arr, int size) {
     double Maximum = arr[0];
     for (int i = 1; i < size; i++) {
-        if (arr[i] > arr[i-1])
+        if (arr[i] > Maximum)
             Maximum = arr[i];
     }
     return Maximum;
 }
+//iterates through the array, replacing the min value if the checked value is lower.
 double MIN(const double* arr, int size) {
     double Minimum = arr[0];
     for (int i = 1; i < size; i++) {
-        if (arr[i] < arr[i-1])
+        if (arr[i] < Minimum)
             Minimum = arr[i];
     }
     return Minimum;
 }
+//iterates through the array, replacing the index value if the checked value is higher than the max.
 int Max_index(const double* arr, int size) {
   int index = 0;
+    double Maximum = arr[0];
    for (int i = 1; i < size; i++) {
-         if (arr[i] > arr[i-1])
+         if (arr[i] > Maximum)
             index = i;
     }
     return index;
 }
+
+//iterates through the array, replacing the index value if the checked value is lower than the min.
 int Min_index(const double* arr, int size) {
     int index = 0;
+    double Minimum = arr[0];
     for (int i = 1; i < size; i++) {
-        if (arr[i] < arr[i-1])
+        if (arr[i] < Minimum)
             index = i;
     }
     return index;
@@ -311,20 +322,24 @@ int Min_index(const double* arr, int size) {
 int spec_index(const double* arr, int size, double val) {
     int index = 0;
     bool FOUND = false;
+    //checks each term individually, saving [i] if the values match
     for (int i = 0; i < size; i++) {
         if (arr[i] == val)
         index = i;
         FOUND = true;
     }
+    //FOUND != true only if the value is not in the array
     if (FOUND!=true) {
         index = -1;
     }
     return index;
 }
 double peak_2_peak(const double* arr, int size) {
+    //Max-Min
     return MAX(arr, size) - MIN(arr, size);
 }
 void calcDerivative(const double arr[], const int samples, double ddx[]){
+    //passes by reference an array, into which populates the difference between each term and the next
     ddx[0]=0;
     for (int i = 1; i < samples; i++) {
         ddx[i]=arr[i]-arr[i-1];
@@ -332,14 +347,16 @@ void calcDerivative(const double arr[], const int samples, double ddx[]){
 }
 double calculateIntegral(const double arr[], const int samples, float time_step) {
     double sum = 0;
+    //goes through each term, making a 'rectangle' for it and summing them up.
     for (int i = 1; i < samples; i++) {
-        sum += (arr[i] - arr[i-1])*time_step;
+        sum += (arr[i])*time_step;
     }
     return sum;
 }
 
 double rootmeansquare(const double arr[], const int samples) {
     double sos = 0;
+    //squaring every term and summing them
     for (int i = 0; i < samples; i++) {
         sos += (arr[i])*arr[i];
     }
@@ -347,22 +364,29 @@ double rootmeansquare(const double arr[], const int samples) {
 }
 
 bool ttest(const double arr1[], const double arr2[], const int size1, const int size2) {
+    //return boolean; true of significantly different, false if not
     bool signif;
+    //creating an array to load differences into
     double diffs[size1] = {0};
     int DOF = size1-1;
     double difftotal = 0;
+    //populating diffs[] array with the differences for each pair, as well as summing the total difference
     for (int i = 0; i < size1; i++) {
         diffs[i] = arr2[i] - arr1[i];
         difftotal += diffs[i];
     }
+    //average difference
     double diffmean = difftotal / (size1);
     double diff_sos = 0;
+    //calculating the sum of squares of the differences
     for (int i = 0; i < size1; i++) {
          diff_sos += (diffs[i] - diffmean) * (diffs[i] - diffmean);
     }
+    //basic calculations, just math
     double diffstd = sqrt(diff_sos / (size1-1));
     double SE_d = diffstd/sqrt(size1);
     double t_stat = diffmean/SE_d;
+    //checking whether T is greater than T
     if (t_stat > alpha95[DOF])
         signif = true;
     else
